@@ -5,6 +5,7 @@ from rest_framework.routers import DefaultRouter
 urlpatterns = [
     path('auth/token/', api_get_token),
     path('auth/email/', api_send_confirmation_code),
+    path('users/me/', api_about_me)
 ]
 
 router = DefaultRouter()

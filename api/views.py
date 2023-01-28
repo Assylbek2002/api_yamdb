@@ -1,6 +1,6 @@
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 import api_yamdb.settings as settings
@@ -10,6 +10,7 @@ from .utils import *
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from .models import User
+from rest_framework.permissions import *
 
 
 @api_view(['POST'])
@@ -25,9 +26,10 @@ def api_get_token(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def api_send_confirmation_code(request):
     confirmation_code = str(code_generator())
-    receiver = request.data.dict()['email']
+    receiver = request.data.get('email')
     subject = 'Confirm your code'
     send_mail(
         subject=subject,
@@ -39,6 +41,22 @@ def api_send_confirmation_code(request):
     user.confirmation_code = confirmation_code
     user.save()
     return Response({"email": f"{receiver}"})
+
+
+@api_view(['GET', 'PATCH'])
+@permission_classes([IsAuthenticated])
+def api_about_me(request):
+    if request.method == 'GET':
+        user = request.user
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+    elif request.method == "PATCH":
+        user = request.user
+        serializer = UserSerializer(user, request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
 
 class TitleViewSet(ModelViewSet):

@@ -38,6 +38,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    role = serializers.CharField(read_only=True)
+
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'username', 'bio', 'email', 'role']
