@@ -36,4 +36,6 @@ class AdminOrAnyOrAuthPermission(permissions.BasePermission):
 
 class IsAdministrator(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.is_superuser or request.user.role == 'admin'
+        if request.user.is_authenticated:
+            return request.user.is_superuser or request.user.role == 'admin'
+        return False
