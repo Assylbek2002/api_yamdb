@@ -14,7 +14,6 @@ class User(AbstractUser):
     email = models.EmailField(max_length=255, unique=True)
     bio = models.TextField(max_length=500, null=True, blank=True)
     role = models.CharField(max_length=50, choices=ROLES, default='user')
-    is_verified = models.BooleanField(default=False)
     confirmation_code = models.CharField(max_length=200, null=True, blank=True)
 
     REQUIRED_FIELDS = ['email']
@@ -24,16 +23,16 @@ class User(AbstractUser):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=50)
+    name = models.CharField(max_length=200, unique=True)
+    slug = models.SlugField(max_length=50, unique=True)
 
     def __str__(self):
         return self.name
 
 
 class Genre(models.Model):
-    name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=50)
+    name = models.CharField(max_length=200, unique=True)
+    slug = models.SlugField(max_length=50, unique=True)
 
     def __str__(self):
         return self.name

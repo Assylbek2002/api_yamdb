@@ -52,7 +52,7 @@ def api_about_me(request):
         return Response(serializer.data)
     elif request.method == "PATCH":
         user = request.user
-        serializer = UserSerializer(user, request.data)
+        serializer = UserSerializer(user, request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

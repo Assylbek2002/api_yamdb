@@ -6,9 +6,13 @@ class AdminOrAnyPermission(permissions.BasePermission):
         if view.action in ["list", "retrieve"]:
             return True
         elif view.action == "create":
-            return request.user.role == 'admin' or request.user.is_superuser
+            if request.user.is_authenticated:
+                return request.user.is_superuser or request.user.role == 'admin'
+            return False
         elif view.action in ['update', 'partial_update', 'destroy']:
-            return request.user.role == 'admin' or request.user.is_superuser
+            if request.user.is_authenticated:
+                return request.user.is_superuser or request.user.role == 'admin'
+            return False
         else:
             return False
 
