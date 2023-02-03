@@ -22,7 +22,6 @@ python manage.py migrate
 
 python manage.py createsuperuser
 
-
 python3 -m venv venv
 
 . venv/bin/activate
@@ -32,17 +31,11 @@ pip install -r requirements.txt
     Создайте в директории файл .env и поместите туда SECRET_KEY, необходимый для запуска проекта
         сгенерировать ключ можно на сайте Djecrety
 
-    Выполните миграции:
+    Выполните миграции: python manage.py migrate
 
-python manage.py migrate
+    Cоздайте суперпользователя: python manage.py createsuperuser
 
-    Cоздайте суперпользователя:
-
-python manage.py createsuperuser
-
-    Запустите сервер:
-
-python manage.py runserver
+    Запустите сервер: python manage.py runserver
 
 Ваш проект запустился на http://127.0.0.1:8000/
 
