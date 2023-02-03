@@ -29,13 +29,18 @@ class AdminOrAnyOrAuthPermission(permissions.BasePermission):
             return False
 
     def has_object_permission(self, request, view, obj):
-        if not request.user.is_authenticated:
-            return False
+        # Deny actions on objects if the user is not authenticated
+        if view.action == 'retrieve':
+            return True
         elif view.action in ['update', 'partial_update', 'destroy']:
-            return request.user.is_superuser or \
+            if request.user.is_authenticated:
+                return obj.author == request.user or \
                    request.user.role == 'admin' or \
                    request.user.role == 'moderator' or \
-                   request.user == obj.author
+                   request.user.is_superuser
+            return False
+        else:
+            return False
 
 
 class IsAdministrator(permissions.BasePermission):

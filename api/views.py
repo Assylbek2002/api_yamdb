@@ -1,6 +1,9 @@
+from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import send_mail
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 import api_yamdb.settings as settings
@@ -11,6 +14,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from .models import User
 from rest_framework.permissions import *
+from .filters import *
 
 
 @api_view(['POST'])
@@ -61,10 +65,14 @@ def api_about_me(request):
 
 class TitleViewSet(ModelViewSet):
     queryset = Title.objects.all()
-    serializer_class = TitleSerializer
     permission_classes = [AdminOrAnyPermission, ]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['category', 'genre', 'name', 'year']
+    filterset_class = TitleFilter
+
+    def get_serializer_class(self):
+        if self.request.method in ["POST", "PUT", "PATCH"]:
+            return TitlePostSerializer
+        return TitleListSerializer
 
 
 class GenreViewSet(ModelViewSet):
@@ -92,11 +100,10 @@ class ReviewViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         title = get_object_or_404(Title, id=int(self.kwargs.get('title_id')))
-        temp = int(self.request.data['score']) + title.rating
-        review_count = title.reviews.count() + 1
-        title.rating = int(temp/review_count)
-        title.save()
-        serializer.save(author=self.request.user, title=title)
+        try:
+            serializer.save(author=self.request.user, title=title)
+        except IntegrityError:
+            raise ParseError(detail="Автор уже оставил отзыв")
 
     def get_queryset(self):
         title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
@@ -108,6 +115,15 @@ class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [AdminOrAnyOrAuthPermission, ]
+
+    def perform_create(self, serializer):
+        review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
+        serializer.save(author=self.request.user, review=review)
+
+    def get_queryset(self):
+        review = get_object_or_404(Review, id=self.kwargs.get("review_id"))
+        comments = Comment.objects.filter(review=review)
+        return comments
 
 
 class UserViewSet(ModelViewSet):

@@ -44,29 +44,31 @@ class Title(models.Model):
         default=current_year(), validators=[MinValueValidator(1700), max_value_current_year]
     )
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING, null=True, blank=True)
-    rating = models.PositiveSmallIntegerField(default=0)
     description = models.TextField(max_length=500, blank=True, null=True)
-    genre = models.ManyToManyField(Genre)
+    genre = models.ManyToManyField(Genre, blank=True, null=True)
 
     def __str__(self):
         return self.name
 
 
 class Review(models.Model):
-    CHOICES = [(i, i) for i in range(11)]
+    CHOICES = [(i, i) for i in range(1, 11)]
 
     title = models.ForeignKey(Title, on_delete=models.CASCADE, related_name='reviews')
     text = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
-    score = models.PositiveSmallIntegerField(default=10, choices=CHOICES)
+    score = models.PositiveSmallIntegerField(choices=CHOICES)
     pub_date = models.DateTimeField("Review published", auto_now_add=True)
+
+    class Meta:
+        unique_together = ['author', 'title']
 
     def __str__(self):
         return self.text
 
 
 class Comment(models.Model):
-    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='reviews')
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='comments')
     text = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     pub_date = models.DateTimeField("Дата добавления", auto_now_add=True)
