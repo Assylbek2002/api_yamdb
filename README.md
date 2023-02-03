@@ -13,62 +13,15 @@ REST API для сервиса YaMDb — базы отзывов о фильма
     проект написан на Python с использованием Django REST Framework
     библиотека Simple JWT - работа с JWT-токеном
     библиотека django-filter - фильтрация запросов
-    базы данны - SQLite3 и PostgreSQL
-    автоматическое развертывание проекта - Docker, docker-compose
+    база данных - SQLite3
     система управления версиями - git
 
-Как запустить проект, используя Docker (база данных PostgreSQL):
-
-    Клонируйте репозитроий с проектом:
-
-git clone https://github.com/leks20/yamdb
-
-    В директории проекта создайте файл .env, в котором пропишите следующие переменные окружения (для тестирования можете использовать указанные значения переменных):
-
-    SECRET_KEY='z!+4n+s%r=&z+r6v0-!_$@uger)@%$fm@)4w*x12ecw0z+%!@8'
-    DB_ENGINE=django.db.backends.postgresql
-    DB_NAME=postgres
-    DB_USER=postgres
-    DB_PASSWORD=postgres
-    DB_HOST=db
-    DB_PORT=5432
-    POSTGRES_USER=postgres
-    POSTGRES_PASSWORD=postgres
-    POSTGRES_DB=postgres
-
-    С помощью Dockerfile и docker-compose.yaml разверните проект:
-
-docker-compose up --build
-
-    В новом окне терминала узнайте id контейнера yamdb_web и войдите в контейнер:
-
-docker container ls
-
-docker exec -it <CONTAINER_ID> bash
-
-    В контейнере выполните миграции, создайте суперпользователя и заполните базу начальными данными:
+Для запуска проекта выполните следующие команды:
 
 python manage.py migrate
 
 python manage.py createsuperuser
 
-python manage.py loaddata fixtures.json
-
-Ваш проект запустился на http://0.0.0.0:8000/
-
-Полная документация (redoc.yaml) доступна по адресу http://0.0.0.0:8000/redoc/
-
-Вы можете запустить тесты и проверить работу модулей:
-
-docker exec -ti <container_id> pytest
-
-Как запустить проект без использования Docker (база данных SQLite3):
-
-    Клонируйте репозитроий с проектом:
-
-git clone https://github.com/leks20/yamdb
-
-    В созданной директории установите виртуальное окружение, активируйте его и установите необходимые зависимости:
 
 python3 -m venv venv
 
@@ -86,10 +39,6 @@ python manage.py migrate
     Cоздайте суперпользователя:
 
 python manage.py createsuperuser
-
-    Загрузите тестовые данные:
-
-python manage.py loaddata fixtures.json
 
     Запустите сервер:
 
@@ -133,23 +82,3 @@ request = requests.post(url, data=data, headers=headers)
  "author": "string",
  "pub_date": "2020-08-20T14:15:22Z"
 }
-
-About
-
-REST API для сервиса YaMDb — базы отзывов о фильмах, книгах и музыке
-Resources
-Readme
-Stars
-0 stars
-Watchers
-2 watching
-Forks
-3 forks
-Releases
-No releases published
-Packages
-No packages published
-Languages
-
-Python 99.3%
-Other 0.7%
