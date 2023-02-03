@@ -146,7 +146,6 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = False
 EMAIL_PORT = 465
 EMAIL_USE_SSL = True
-EMAIL_HOST_USER = 'zhumasserikov.assylbek@gmail.com'
 
 
 AUTH_USER_MODEL = 'api.User'
